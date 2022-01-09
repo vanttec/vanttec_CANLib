@@ -3,7 +3,7 @@
 //
 
 #include "CANSerialization.h"
-#include "Vanttec_CANLib/ByteOrder/inet.h"
+#include "ByteOrder/inet.h"
 #include <math.h>
 
 uint32_t serialize_float(float input) {

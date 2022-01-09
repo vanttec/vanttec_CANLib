@@ -3,8 +3,8 @@
 //
 
 #include "CANMessage.h"
-#include "Vanttec_CANLib/Utils/CANSerialization.h"
-#include "Vanttec_CANLib/Utils/CANDeserialization.h"
+#include "Utils/CANSerialization.h"
+#include "Utils/CANDeserialization.h"
 #include "math.h"
 
 namespace vanttec {

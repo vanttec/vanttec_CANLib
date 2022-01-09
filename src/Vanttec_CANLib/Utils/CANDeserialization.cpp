@@ -3,7 +3,7 @@
 //
 
 #include "CANDeserialization.h"
-#include "Vanttec_CANLib/ByteOrder/inet.h"
+#include "ByteOrder/inet.h"
 #include <math.h>
 
 #ifdef __cplusplus

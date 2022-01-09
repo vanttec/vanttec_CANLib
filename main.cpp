@@ -8,7 +8,6 @@
 #include "Vanttec_CANLib/Utils/CANDeserialization.h"
 #include "Vanttec_CANLib/Utils/CANSerialization.h"
 #include "Vanttec_CANLib_Linux/CANHandler.h"
-#include "Vanttec_CANLib/can_system_def.h"
 
 int main() {
     vanttec::CANHandler handler("test");

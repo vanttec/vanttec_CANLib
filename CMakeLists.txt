@@ -14,7 +14,7 @@ FetchContent_MakeAvailable(googletest)
 
 file(GLOB_RECURSE Vanttec_CANLib_SRC src/*.cpp)
 
-include_directories(src)
+include_directories(src src/Vanttec_CANLib)
 add_executable(Vanttec_CANLib main.cpp ${Vanttec_CANLib_SRC})
 target_link_libraries(Vanttec_CANLib pthread)
 
