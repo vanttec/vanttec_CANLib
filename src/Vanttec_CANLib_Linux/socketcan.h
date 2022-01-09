@@ -20,11 +20,11 @@
 #include <cstring>
 
 namespace vanttec {
-    int socketcan_open(const std::string &interface){
+    int socketcan_open(const std::string &interface) {
         int ret = 0;
         int fd = -1;
         fd = socket(AF_CAN, SOCK_RAW, CAN_RAW);
-        if(fd == -1){
+        if (fd == -1) {
             throw std::runtime_error("Error opening socketcan socket");
         }
 
@@ -46,8 +46,8 @@ namespace vanttec {
         sockaddr_can addr;
         addr.can_family = AF_CAN;
         addr.can_ifindex = ifr.ifr_ifindex;
-        ret = bind(fd, (struct sockaddr*) &addr, sizeof(addr));
-        if(ret < 0){
+        ret = bind(fd, (struct sockaddr *) &addr, sizeof(addr));
+        if (ret < 0) {
             close(fd);
             throw std::runtime_error("Error binding to CAN interface");
         }

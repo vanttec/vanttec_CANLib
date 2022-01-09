@@ -61,6 +61,7 @@ namespace vanttec {
         });
 
         auto elem = writeQueue.front();
+        //TODO Write
         writeQueue.pop();
         lk.unlock();
     }

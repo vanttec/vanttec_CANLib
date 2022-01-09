@@ -4,13 +4,16 @@
 
 #pragma once
 
-#include <cstdint>
-#include <cmath>
+#include <stdint.h>
 
-namespace vanttec {
-    float deserializeFloat(uint32_t in);
+#ifdef __cplusplus
+extern "C" {
+#endif
+float deserialize_float(uint32_t in);
 
-    uint16_t deserializeShort(uint8_t *data);
+uint16_t deserialize_short(const uint8_t *data);
 
-    uint32_t deserializeLong(uint8_t *data);
+uint32_t deserialize_long(const uint8_t *data);
+#ifdef __cplusplus
 }
+#endif

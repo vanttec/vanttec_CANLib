@@ -7,7 +7,7 @@
 #include "Vanttec_CANLib/Utils/CANDeserialization.h"
 
 float serializeDeserializeFloat(float in){
-    return vanttec::deserializeFloat(vanttec::serializeFloat(in));
+    return deserialize_float(serialize_float(in));
 }
 
 TEST(CANSerialize, serializeFloat){
@@ -21,15 +21,15 @@ TEST(CANSerialize, serializeFloat){
 TEST(CANSerialize, serializeShort){
     uint8_t data[2];
     for(uint32_t i = 0; i < std::numeric_limits<uint16_t>().max(); i++){
-        vanttec::serializeShort(data, i);
-        EXPECT_EQ(vanttec::deserializeShort(data), i);
+        serialize_short(data, i);
+        EXPECT_EQ(deserialize_short(data), i);
     }
 }
 
 TEST(CANSerialize, serializeLong){
     uint8_t data[4];
     for(uint64_t i = 0; i < std::numeric_limits<uint32_t>().max(); i += 1024){
-        vanttec::serializeLong(data, i);
-        EXPECT_EQ(vanttec::deserializeLong(data), i);
+        serialize_long(data, i);
+        EXPECT_EQ(deserialize_long(data), i);
     }
 }

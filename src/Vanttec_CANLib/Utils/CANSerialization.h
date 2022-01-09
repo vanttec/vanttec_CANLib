@@ -4,13 +4,16 @@
 
 #pragma once
 
-#include <cstdint>
-#include <cmath>
+#include <stdint.h>
 
-namespace vanttec {
-    uint32_t serializeFloat(float input);
+#ifdef __cplusplus
+extern "C" {
+#endif
+uint32_t serialize_float(float input);
 
-    void serializeShort(uint8_t *data, uint16_t in);
+void serialize_short(uint8_t *data, uint16_t in);
 
-    void serializeLong(uint8_t *data, uint32_t in);
-};
+void serialize_long(uint8_t *data, uint32_t in);
+#ifdef __cplusplus
+}
+#endif
