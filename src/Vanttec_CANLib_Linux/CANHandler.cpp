@@ -28,9 +28,9 @@ namespace vanttec {
             throw std::runtime_error("Could not add to epoll");
         }
 
-        register_parser([](uint8_t id, can_frame frame){
-            std::cout << std::to_string(id) << std::endl;
-        });
+//        register_parser([](uint8_t id, can_frame frame){
+//            std::cout << std::to_string(id) << std::endl;
+//        });
     }
 
     void CANHandler::write(const vanttec::CANMessage &msg) {
