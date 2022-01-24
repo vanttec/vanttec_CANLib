@@ -10,7 +10,7 @@
 #include "Vanttec_CANLib_Linux/CANHandler.h"
 
 int main() {
-    vanttec::CANHandler handler("test");
+    vanttec::CANHandler handler("can0");
 //    std::thread writeThread([&]{
 //        for(;;) {
 //            handler.write(vanttec::CANMessage());
@@ -18,9 +18,8 @@ int main() {
 //        }
 //    });
 //
-//    while(true){
-//        handler.update_write();
-//        std::cout << "Got data" << std::endl;
-//    }
+    while(true){
+        handler.update_read();
+    }
 
 }

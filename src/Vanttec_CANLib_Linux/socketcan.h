@@ -20,7 +20,7 @@
 #include <cstring>
 
 namespace vanttec {
-    int socketcan_open(const std::string &interface) {
+    inline int socketcan_open(const std::string &interface) {
         int ret = 0;
         int fd = -1;
         fd = socket(AF_CAN, SOCK_RAW, CAN_RAW);
@@ -43,7 +43,7 @@ namespace vanttec {
 //            throw std::runtime_error("Error configuring SocketCAN filters");
 //        }
 
-        sockaddr_can addr;
+        sockaddr_can addr{};
         addr.can_family = AF_CAN;
         addr.can_ifindex = ifr.ifr_ifindex;
         ret = bind(fd, (struct sockaddr *) &addr, sizeof(addr));
