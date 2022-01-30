@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <condition_variable>
 #include <queue>
+#include <functional>
+#include "socketcan.h"
 #include "Vanttec_CANLib/CANMessage.h"
 
 namespace vanttec {
@@ -19,6 +21,8 @@ namespace vanttec {
 
         ~CANHandler();
 
+        void register_parser(const std::function<void(uint8_t, can_frame)> &parser);
+
         void write(const vanttec::CANMessage &msg);
 
     public:
@@ -26,7 +30,9 @@ namespace vanttec {
 
         void update_write();
 
-        std::queue<int> writeQueue;
+        std::vector<std::function<void(uint8_t, can_frame)>> msgParsers;
+
+        std::queue<CANMessage> writeQueue;
 
         static const int MAX_EVENTS = 5;
         epoll_event evlist[MAX_EVENTS];
