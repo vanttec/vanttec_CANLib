@@ -38,6 +38,9 @@ extern "C" {
 #endif
 uint8_t can_parse_id(const uint8_t *data, uint8_t len);
 
+uint8_t can_pack_byte(uint8_t id, uint8_t dataIn, uint8_t *data, uint8_t len);
+uint8_t can_parse_byte(const uint8_t *data, uint8_t len);
+
 uint8_t can_pack_float(uint8_t id, float n, uint8_t *data, uint8_t len);
 float can_parse_float(const uint8_t *data, uint8_t len);
 
