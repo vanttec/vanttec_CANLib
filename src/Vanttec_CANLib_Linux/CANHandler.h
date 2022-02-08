@@ -6,6 +6,7 @@
 #define FLOATSERIALIZATION_CANHANDLER_H
 
 #include <string>
+#include <map>
 #include <sys/epoll.h>
 #include <unistd.h>
 #include <condition_variable>
@@ -21,16 +22,19 @@ namespace vanttec {
 
         ~CANHandler();
 
+        void register_parser(uint8_t filter, const std::function<void(can_frame)> &parser);
+
         void register_parser(const std::function<void(uint8_t, can_frame)> &parser);
 
         void write(const vanttec::CANMessage &msg);
 
-    public:
         void update_read();
 
         void update_write();
-
+    
+    private:
         std::vector<std::function<void(uint8_t, can_frame)>> msgParsers;
+        std::map<uint8_t, std::vector<std::function<void(can_frame)>>> filterMsgParsers;
 
         std::queue<CANMessage> writeQueue;
 

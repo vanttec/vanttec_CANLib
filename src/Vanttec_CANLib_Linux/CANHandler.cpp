@@ -42,6 +42,10 @@ namespace vanttec {
         cv.notify_all();
     }
 
+    void CANHandler::register_parser(uint8_t filter, const std::function<void(can_frame)> &parser){
+        filterMsgParsers[filter].emplace_back(parser);
+    }
+
     void CANHandler::register_parser(const std::function<void(uint8_t, can_frame)> &parser) {
         msgParsers.emplace_back(parser);
     }
@@ -63,6 +67,9 @@ namespace vanttec {
 
             auto id = can_parse_id(frame.data, frame.can_dlc);
             for(auto &parser : msgParsers) parser(id, frame);
+            auto it = filterMsgParsers.find(id);
+            if(it != filterMsgParsers.end())
+                for(auto &parser : it->second) parser(frame);
         }
     }
 
@@ -74,10 +81,7 @@ namespace vanttec {
         });
 
         auto elem = writeQueue.front();
-        auto ret = ::write(canfd, elem.data, elem.len);
-        if(ret < 0){
-            throw std::runtime_error("Error writing to canbus");
-        }
+        while (::write(canfd, elem.data, elem.len) < 0);
         writeQueue.pop();
         lk.unlock();
     }
