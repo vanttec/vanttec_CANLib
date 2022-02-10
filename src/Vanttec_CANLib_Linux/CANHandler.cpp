@@ -33,12 +33,42 @@ namespace vanttec {
 //        });
     }
 
+    void CANHandler::update_write(){
+        std::unique_lock<std::mutex> lk(cv_m);
+        //Wait until write queue has something
+        cv.wait(lk, [this]
+                { return this->writeDataReady.load(); });
+
+        while(!writeQueue.empty()){
+            auto elem = writeQueue.front();
+
+            if (elem.len != 0)
+            {
+                can_frame outFrame;
+                outFrame.can_dlc = elem.len;
+                memcpy(outFrame.data, elem.data, elem.len);
+                outFrame.can_id = 0x123;
+
+                while (::write(canfd, &outFrame, sizeof(outFrame)) != sizeof(outFrame))
+                {
+                    std::cerr << "Retrying CAN Write!" << std::endl;
+                    ;
+                }
+            }
+
+            writeQueue.pop();
+        }
+
+        writeDataReady = false;
+        lk.unlock();
+    }
+
     void CANHandler::write(const vanttec::CANMessage &msg) {
         //TODO Do something with the message
-        std::unique_lock<std::mutex> lk(cv_m);
+        std::lock_guard<std::mutex> lk(cv_m);
         writeQueue.push(msg);
+        writeDataReady = true;
 
-        lk.unlock();
         cv.notify_all();
     }
 
@@ -71,19 +101,6 @@ namespace vanttec {
             if(it != filterMsgParsers.end())
                 for(auto &parser : it->second) parser(frame);
         }
-    }
-
-    void CANHandler::update_write() {
-        std::unique_lock<std::mutex> lk(cv_m);
-        //Wait until write queue has something
-        cv.wait(lk, [this] {
-            return !this->writeQueue.empty();
-        });
-
-        auto elem = writeQueue.front();
-        while (::write(canfd, elem.data, elem.len) < 0);
-        writeQueue.pop();
-        lk.unlock();
     }
 
     CANHandler::~CANHandler() {

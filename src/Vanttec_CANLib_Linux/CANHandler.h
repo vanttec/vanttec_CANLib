@@ -5,6 +5,7 @@
 #ifndef FLOATSERIALIZATION_CANHANDLER_H
 #define FLOATSERIALIZATION_CANHANDLER_H
 
+#include <atomic>
 #include <string>
 #include <map>
 #include <sys/epoll.h>
@@ -36,6 +37,7 @@ namespace vanttec {
         std::vector<std::function<void(uint8_t, can_frame)>> msgParsers;
         std::map<uint8_t, std::vector<std::function<void(can_frame)>>> filterMsgParsers;
 
+        std::atomic<bool> writeDataReady{false};
         std::queue<CANMessage> writeQueue;
 
         static const int MAX_EVENTS = 5;
