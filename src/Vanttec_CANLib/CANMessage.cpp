@@ -39,6 +39,11 @@ namespace vanttec {
         message.len = 5;
         can_pack_long(id, data, message.data, message.len);
     }
+
+    void packByte(CANMessage &message, uint8_t id, uint8_t data){
+        message.len = 2;
+        can_pack_byte(id, data, message.data, message.len);
+    }
 }
 #endif
 

@@ -30,6 +30,8 @@ namespace vanttec {
     uint32_t getLong(const CANMessage &message);
 
     void packLong(CANMessage &message, uint8_t id, uint32_t data);
+
+    void packByte(CANMessage &message, uint8_t id, uint8_t data);
 }
 #endif
 

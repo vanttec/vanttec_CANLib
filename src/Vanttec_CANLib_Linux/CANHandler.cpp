@@ -36,8 +36,11 @@ namespace vanttec {
     void CANHandler::update_write(){
         std::unique_lock<std::mutex> lk(cv_m);
         //Wait until write queue has something
-        cv.wait(lk, [this]
-                { return this->writeDataReady.load(); });
+        if(!cv.wait_for(lk, std::chrono::seconds(1), [this]
+                { return this->writeDataReady.load(); })){
+            //Timed out, return and release lock
+            return;
+        }
 
         while(!writeQueue.empty()){
             auto elem = writeQueue.front();
@@ -49,10 +52,11 @@ namespace vanttec {
                 memcpy(outFrame.data, elem.data, elem.len);
                 outFrame.can_id = 0x123;
 
-                while (::write(canfd, &outFrame, sizeof(outFrame)) != sizeof(outFrame))
+                int retry_count = 0;
+                while (::write(canfd, &outFrame, sizeof(can_frame)) != sizeof(can_frame) && retry_count < 10)
                 {
                     std::cerr << "Retrying CAN Write!" << std::endl;
-                    ;
+                    retry_count++;
                 }
             }
 
@@ -64,7 +68,6 @@ namespace vanttec {
     }
 
     void CANHandler::write(const vanttec::CANMessage &msg) {
-        //TODO Do something with the message
         std::lock_guard<std::mutex> lk(cv_m);
         writeQueue.push(msg);
         writeDataReady = true;
