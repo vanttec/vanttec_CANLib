@@ -99,7 +99,7 @@ void update_table(uint8_t device_id, uint8_t message_id, void *rxData, uint32_t 
     void *buf[8];
     for(uint32_t i = 0; i < last_entry; i++){
         if(rx_table[i].device_id == 0xff || device_id == rx_table[i].device_id){
-            if(rx_table[i].message_id = message_id){
+            if(rx_table[i].message_id == message_id){
                 // Write to table
                 if(rx_table[i].len + 1 != dlc){
                     // Data length must be the same!
@@ -176,7 +176,9 @@ void can_rx_task(){
     for(;;){
         while(HAL_CAN_GetRxFifoFillLevel(&g_vanttec_hcan, CAN_RX_FIFO0)){
             HAL_StatusTypeDef ret = HAL_CAN_GetRxMessage(&g_vanttec_hcan, CAN_RX_FIFO0, &header, buf);
-            if(ret != HAL_OK || header.DLC < 1) continue;
+            if(ret != HAL_OK || header.DLC < 1){
+                continue;
+            }
 
             msg.message_id = buf[0];
             msg.device_id = header.StdId & 0x3F;

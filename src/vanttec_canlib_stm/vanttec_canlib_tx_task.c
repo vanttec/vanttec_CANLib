@@ -38,10 +38,11 @@ void canlib_tx_update(){
 	txHeader.RTR = CAN_RTR_DATA;
 
 	CAN_TX_QUEUE_OBJ txOut;
-	while(osMessageQueueGet(g_txMessageQueue, &txOut, NULL, 0) == osOK){
+	while(osMessageQueueGet(g_txMessageQueue, &txOut, NULL, 1) == osOK){
 		txHeader.DLC = txOut.msg_size;
 		HAL_StatusTypeDef ret = HAL_CAN_AddTxMessage(&g_vanttec_hcan, &txHeader, txOut.buf, &txMailbox);
 		if(ret != HAL_OK){
+			txHeader.DLC++;
 			//TODO do something on error
 		}
 	}

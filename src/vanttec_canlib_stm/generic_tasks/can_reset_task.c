@@ -10,19 +10,20 @@ extern CAN_HandleTypeDef g_vanttec_hcan;
 void can_reset_task(){
 	bool initializingBus = false;
 	for(;;){
+		SET_BIT(g_vanttec_hcan.Instance->MCR, CAN_MCR_ABOM);
 		// Check for bus off bit
-		if(READ_BIT(g_vanttec_hcan.Instance->ESR, CAN_ESR_BOFF)){
-		  // Bus is off!!!! Reset bus
-		  SET_BIT(g_vanttec_hcan.Instance->MCR, CAN_MCR_INRQ);
-		  initializingBus = true;
-		}
-		if(initializingBus && READ_BIT(g_vanttec_hcan.Instance->MSR,
-		CAN_MSR_INAK)){
-		  // Bus is initialized, reset init bit
-		  CLEAR_BIT(g_vanttec_hcan.Instance->MCR, CAN_MCR_INRQ);
-		  initializingBus = false;
-		}
-		osDelay(100);
+		// if(READ_BIT(g_vanttec_hcan.Instance->ESR, CAN_ESR_BOFF)){
+		//   // Bus is off!!!! Reset bus
+		//   SET_BIT(g_vanttec_hcan.Instance->MCR, CAN_MCR_INRQ);
+		//   initializingBus = true;
+		// }
+		// if(initializingBus && READ_BIT(g_vanttec_hcan.Instance->MSR,
+		// CAN_MSR_INAK)){
+		//   // Bus is initialized, reset init bit
+		//   CLEAR_BIT(g_vanttec_hcan.Instance->MCR, CAN_MCR_INRQ);
+		//   initializingBus = false;
+		// }
+		osDelay(10);
 	}
 }
 
