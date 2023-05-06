@@ -9,7 +9,7 @@ void hb_task(void *args){
 	for(;;){
 		canlib_send_byte(VANTTEC_CAN_ID_HB, data);
 		data++;
-		osDelay(1000);
+		osDelay(50);
 	}
 }
 
@@ -19,7 +19,6 @@ const osThreadAttr_t hbTaskAttributes = {
 		.stack_size = 128 * 1
 };
 
-
 void init_hb_task(){
-	//hbTaskHandle = osThreadNew(hb_task, NULL, &hbTaskAttributes);
+	hbTaskHandle = osThreadNew(hb_task, NULL, &hbTaskAttributes);
 }
