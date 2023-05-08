@@ -9,7 +9,7 @@ void hb_task(void *args){
 	for(;;){
 		canlib_send_byte(VANTTEC_CAN_ID_HB, data);
 		data++;
-		osDelay(50);
+		osDelay(10);
 	}
 }
 
