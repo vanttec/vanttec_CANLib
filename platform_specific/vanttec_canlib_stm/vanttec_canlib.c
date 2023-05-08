@@ -1,8 +1,10 @@
 #include "vanttec_canlib.h"
 #include "utils.h"
+#include <cmsis_os.h>
 
 CAN_HandleTypeDef g_vanttec_hcan;
 uint16_t g_vanttec_deviceId;
+osMutexId_t g_can_lock;
 
 void init_canlib(CAN_HandleTypeDef hcan, uint8_t deviceId){
 	g_vanttec_hcan = hcan;
@@ -32,4 +34,6 @@ void init_canlib(CAN_HandleTypeDef hcan, uint8_t deviceId){
 
 	// TODO format device id into actual CAN id with vanttec prefix
 	g_vanttec_deviceId = 0x500 | deviceId;
+
+	g_can_lock = osMutexNew(NULL);
 }

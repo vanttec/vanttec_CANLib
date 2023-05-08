@@ -18,6 +18,7 @@ typedef struct {
 
 canlib_rx_entry rx_table[MAX_CANLIB_RX_ENTRIES];
 uint32_t last_entry = 0;
+extern osMutexId_t g_can_lock;
 
 typedef struct {
     uint8_t device_id;
@@ -58,8 +59,8 @@ void init_canlib_rx(){
         NULL
     );
 
-    canRxTaskHandle = osThreadNew(can_rx_task, NULL, &canRxTask_attributes);
-    canRxQueueTaskHandle = osThreadNew(can_rx_queue_task, NULL, &canRxQueueTask_attributes);
+    //canRxTaskHandle = osThreadNew(can_rx_task, NULL, &canRxTask_attributes);
+    //canRxQueueTaskHandle = osThreadNew(can_rx_queue_task, NULL, &canRxQueueTask_attributes);
 }
 
 bool is_valid_length(VANTTEC_CANLIB_MSGTYPE message_type, uint8_t len){
@@ -174,6 +175,7 @@ void can_rx_task(){
     CAN_RxHeaderTypeDef header;
     uint8_t buf[8];
     for(;;){
+        osMutexAcquire(g_can_lock, 10);
         while(HAL_CAN_GetRxFifoFillLevel(&g_vanttec_hcan, CAN_RX_FIFO0)){
             HAL_StatusTypeDef ret = HAL_CAN_GetRxMessage(&g_vanttec_hcan, CAN_RX_FIFO0, &header, buf);
             if(ret != HAL_OK || header.DLC < 1){
@@ -188,6 +190,7 @@ void can_rx_task(){
 
             osMessageQueuePut(rxMessageQueue, &msg, msg.priority, 10);            
         }
+        osMutexRelease(g_can_lock);
         osDelay(10);
     }
 }

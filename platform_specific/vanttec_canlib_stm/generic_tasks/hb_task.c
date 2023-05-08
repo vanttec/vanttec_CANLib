@@ -7,9 +7,10 @@
 void hb_task(void *args){
 	uint8_t data = 0;
 	for(;;){
+		canlib_send_debug_string("Hello");
 		canlib_send_byte(VANTTEC_CAN_ID_HB, data);
 		data++;
-		osDelay(10);
+		osDelay(1000);
 	}
 }
 

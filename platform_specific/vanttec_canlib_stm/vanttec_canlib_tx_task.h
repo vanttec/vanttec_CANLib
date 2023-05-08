@@ -4,6 +4,7 @@
 
 void init_canlib_tx();
 
+int8_t canlib_send_debug_string(const char *string);
 
 void canlib_queue_tx(const uint8_t *data, uint8_t len);
 void canlib_send_byte(uint8_t id, uint8_t data);
