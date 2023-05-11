@@ -59,8 +59,8 @@ void init_canlib_rx(){
         NULL
     );
 
-    //canRxTaskHandle = osThreadNew(can_rx_task, NULL, &canRxTask_attributes);
-    //canRxQueueTaskHandle = osThreadNew(can_rx_queue_task, NULL, &canRxQueueTask_attributes);
+    canRxTaskHandle = osThreadNew(can_rx_task, NULL, &canRxTask_attributes);
+    canRxQueueTaskHandle = osThreadNew(can_rx_queue_task, NULL, &canRxQueueTask_attributes);
 }
 
 bool is_valid_length(VANTTEC_CANLIB_MSGTYPE message_type, uint8_t len){

@@ -33,7 +33,7 @@ void init_canlib(CAN_HandleTypeDef hcan, uint8_t deviceId){
 	if(ret != HAL_OK) vanttec_canlib_error_handler();
 
 	// TODO format device id into actual CAN id with vanttec prefix
-	g_vanttec_deviceId = 0x500 | deviceId;
+	g_vanttec_deviceId = 0x400 | deviceId;
 
 	g_can_lock = osMutexNew(NULL);
 }
