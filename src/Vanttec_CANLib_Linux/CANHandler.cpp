@@ -26,7 +26,7 @@ namespace vanttec {
             close(epfd);
             close(canfd);
             throw std::runtime_error("Could not add to epoll");
-        }
+        }   
 
 //        register_parser([](uint8_t id, can_frame frame){
 //            std::cout << std::to_string(id) << std::endl;
@@ -36,7 +36,7 @@ namespace vanttec {
     void CANHandler::update_write(){
         std::unique_lock<std::mutex> lk(cv_m);
         //Wait until write queue has something
-        if(!cv.wait_for(lk, std::chrono::seconds(1), [this]
+        if(!cv.wait_for(lk, std::chrono::milliseconds(0), [this]
                 { return this->writeDataReady.load(); })){
             //Timed out, return and release lock
             return;
@@ -84,9 +84,11 @@ namespace vanttec {
     }
 
     void CANHandler::update_read() {
-        int rdy = epoll_wait(epfd, evlist, MAX_EVENTS, -1);
+        // std::cout << "Waiting for event" << std::endl;
+        int rdy = epoll_wait(epfd, evlist, MAX_EVENTS, timeout);
         if (rdy == -1) {
             std::cerr << "Error waiting for epoll" << std::endl;
+            // throw std::runtime_error("Error on epoll_wait: " + std::string(strerror(errno)));
             return;
         }
 

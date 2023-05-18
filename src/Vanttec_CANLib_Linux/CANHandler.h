@@ -45,6 +45,8 @@ namespace vanttec {
         int epfd{-1};
         int canfd{-1};
 
+        int timeout{10};
+
         std::condition_variable cv;
         std::mutex cv_m;
     };
