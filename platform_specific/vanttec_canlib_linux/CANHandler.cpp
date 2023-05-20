@@ -34,45 +34,53 @@ namespace vanttec {
     }
 
     void CANHandler::update_write(){
-        std::unique_lock<std::mutex> lk(cv_m);
-        //Wait until write queue has something
-        if(!cv.wait_for(lk, std::chrono::milliseconds(0), [this]
-                { return this->writeDataReady.load(); })){
-            //Timed out, return and release lock
+        if (!writeDataReady.exchange(false))
             return;
-        }
 
-        while(!writeQueue.empty()){
-            auto elem = writeQueue.front();
-
-            if (elem.len != 0)
-            {
-                can_frame outFrame;
-                outFrame.can_dlc = elem.len;
-                memcpy(outFrame.data, elem.data, elem.len);
-                outFrame.can_id = 0x123;
-
-                int retry_count = 0;
-                while (::write(canfd, &outFrame, sizeof(can_frame)) != sizeof(can_frame) && retry_count < 10)
-                {
-                    std::cerr << "Retrying CAN Write!" << std::endl;
-                    retry_count++;
-                }
+        std::vector<vanttec::CANMessage> messages;
+        {
+            std::lock_guard<std::mutex> lk(cv_m);
+            messages.reserve(writeQueue.size());
+            while (!writeQueue.empty()) {
+                messages.push_back(writeQueue.front());
+                writeQueue.pop();
             }
-
-            writeQueue.pop();
         }
 
-        writeDataReady = false;
-        lk.unlock();
+        std::vector<can_frame> frames;
+        frames.reserve(messages.size());
+
+        for (const auto& msg : messages) {
+            if (msg.len != 0) {
+                can_frame outFrame;
+                outFrame.can_dlc = msg.len;
+                memcpy(outFrame.data, msg.data, msg.len);
+                outFrame.can_id = 0x123;
+                frames.push_back(outFrame);
+            }
+        }
+
+        int retry_count = 0;
+        auto start = std::chrono::system_clock::now();
+        ssize_t bytesWritten = ::write(canfd, frames.data(), frames.size() * sizeof(can_frame));
+        while (bytesWritten != -1 && bytesWritten % sizeof(can_frame) == 0 && retry_count < 10) {
+            std::cerr << "Retrying CAN Write!" << std::endl;
+            bytesWritten = ::write(canfd, frames.data(), frames.size() * sizeof(can_frame));
+            retry_count++;
+        }
+        auto end = std::chrono::system_clock::now();
+        std::chrono::duration<float, std::milli> duration = end - start;
+        std::cout << duration.count() << " s\n";
     }
 
     void CANHandler::write(const vanttec::CANMessage &msg) {
-        std::lock_guard<std::mutex> lk(cv_m);
-        writeQueue.push(msg);
-        writeDataReady = true;
-
-        cv.notify_all();
+        {
+            std::lock_guard<std::mutex> lk(cv_m);
+            writeQueue.push(msg);
+            writeDataReady = true;
+        }
+        // cv.notify_all();
+        cv.notify_one();
     }
 
     void CANHandler::register_parser(uint8_t filter, const std::function<void(can_frame)> &parser){
@@ -97,7 +105,7 @@ namespace vanttec {
         for (int i = 0; i < rdy; i++) {
             if(!(evlist[i].events & EPOLLIN)) continue;
             //Read available
-            auto len = read(evlist[i].data.fd, &frame, sizeof(frame));
+            auto len = ::read(evlist[i].data.fd, &frame, sizeof(frame));
             if(len < 0) continue;
 
             auto id = can_parse_id(frame.data, frame.can_dlc);
