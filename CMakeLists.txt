@@ -5,14 +5,10 @@ set(CMAKE_CXX_STANDARD 14)
 
 file(GLOB_RECURSE Vanttec_CANLib_SRC src/*.cpp)
 
-add_library(Vanttec_CANLibLIB ${Vanttec_CANLib_SRC})
-
-include_directories(src src/Vanttec_CANLib)
-add_executable(Vanttec_CANLib main.cpp)
-target_link_libraries(Vanttec_CANLib pthread Vanttec_CANLibLIB)
-
-
 file(GLOB_RECURSE Vanttec_CANLib_Tests tests/*.cpp)
+add_library(Vanttec_CANLibLIB ${Vanttec_CANLib_SRC})
+target_include_directories(Vanttec_CANLibLIB PUBLIC src/Vanttec_CANLib)
+
 
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
         if(${CMAKE_VERSION} VERSION_GREATER 3.11)
@@ -27,6 +23,7 @@ if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
 
         enable_testing()
         add_executable(Vanttec_CANLib_test ${Vanttec_CANLib_Tests})
+	target_include_directories(Vanttec_CANLib_test PUBLIC src/)
         target_link_libraries(Vanttec_CANLib_test gtest_main Vanttec_CANLibLIB)
 
         include(GoogleTest)
