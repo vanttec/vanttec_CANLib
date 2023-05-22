@@ -42,8 +42,23 @@ const osThreadAttr_t driverfaultTaskAttributes = {
 
 void emergencystop_task(void *args)
 {
+    uint8_t buf[8];
+    uint8_t emergencystop_data = 0;
+    uint8_t last_emergencystop_data = 0;
+    register_canlib_rx(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_ESTOP, VANTTEC_CANLIB_BYTE, &emergencystop_data, 1);
     for (;;)
     {
+        if (emergencystop_data != last_emergencystop_data)
+        {
+            buf[0] = 0x07;
+            buf[1] = 0x0;
+            if (emergencystop_data == 1)
+            {
+                buf[1] = 0x1;
+            }
+            last_emergencystop_data = emergencystop_data;
+            update_table(VANTTEC_CAN_ID_PANELRX, 0x07, buf, 2);
+        }
         osDelay(10);
     }
 }
@@ -63,7 +78,7 @@ void drivemode_task(void *args)
     uint8_t buf[8];
     uint8_t drivemode_data = 0;
     uint8_t last_drivemode_data = 0;
-    register_canlib_rx(VANTTEC_CAN_ID_JETSON, 0x02, VANTTEC_CANLIB_BYTE, &drivemode_data, 1);
+    register_canlib_rx(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_DRIVE_MODE, VANTTEC_CANLIB_BYTE, &drivemode_data, 1);
     for (;;)
     {
         if (drivemode_data != last_drivemode_data)
@@ -82,29 +97,89 @@ void drivemode_task(void *args)
 }
 void driverpresent_task(void *args)
 {
+    uint8_t buf[8];
+    uint8_t driverpresent_data = 0;
+    uint8_t last_driverpresent_data = 0;
+    register_canlib_rx(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_DRIVER_PRESENT, VANTTEC_CANLIB_BYTE, &driverpresent_data, 1);
     for (;;)
     {
+        if (driverpresent_data != last_driverpresent_data)
+        {
+            buf[0] = 0x07;
+            buf[1] = 0x0;
+            if (driverpresent_data == 1)
+            {
+                buf[1] = 0x1;
+            }
+            last_driverpresent_data = driverpresent_data;
+            update_table(VANTTEC_CAN_ID_PANELRX, 0x07, buf, 2);
+        }
         osDelay(10);
     }
 }
 void reverse_task(void *args)
 {
+    uint8_t buf[8];
+    uint8_t reverse_data = 0;
+    uint8_t last_reverse_data = 0;
+    register_canlib_rx(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_REVERSE, VANTTEC_CANLIB_BYTE, &reverse_data, 1);
     for (;;)
     {
+        if (reverse_data != last_reverse_data)
+        {
+            buf[0] = 0x07;
+            buf[1] = 0x0;
+            if (reverse_data == 1)
+            {
+                buf[1] = 0x1;
+            }
+            last_reverse_data = reverse_data;
+            update_table(VANTTEC_CAN_ID_PANELRX, 0x07, buf, 2);
+        }
         osDelay(10);
     }
 }
 void frenomanual_task(void *args)
 {
+    uint8_t buf[8];
+    uint8_t frenomanual_data = 0;
+    uint8_t last_frenomanual_data = 0;
+    register_canlib_rx(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_FRENO_MANUAL, VANTTEC_CANLIB_BYTE, &frenomanual_data, 1);
     for (;;)
     {
+        if (frenomanual_data != last_frenomanual_data)
+        {
+            buf[0] = 0x07;
+            buf[1] = 0x0;
+            if (frenomanual_data == 1)
+            {
+                buf[1] = 0x1;
+            }
+            last_frenomanual_data = frenomanual_data;
+            update_table(VANTTEC_CAN_ID_PANELRX, 0x07, buf, 2);
+        }
         osDelay(10);
     }
 }
 void driverfault_task(void *args)
 {
+    uint8_t buf[8];
+    uint8_t driverfault_data = 0;
+    uint8_t last_driverfault_data = 0;
+    register_canlib_rx(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_DRIVER_FAULT, VANTTEC_CANLIB_BYTE, &driverfault_data, 1);
     for (;;)
     {
+        if (driverfault_data != last_driverfault_data)
+        {
+            buf[0] = 0x07;
+            buf[1] = 0x0;
+            if (driverfault_data == 1)
+            {
+                buf[1] = 0x1;
+            }
+            last_driverfault_data = driverfault_data;
+            update_table(VANTTEC_CAN_ID_PANELRX, 0x07, buf, 2);
+        }
         osDelay(10);
     }
 }
