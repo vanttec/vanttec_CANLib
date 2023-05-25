@@ -36,4 +36,5 @@ void init_canlib(CAN_HandleTypeDef hcan, uint8_t deviceId){
 	g_vanttec_deviceId = 0x400 | deviceId;
 
 	g_can_lock = osMutexNew(NULL);
+
 }

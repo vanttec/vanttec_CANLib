@@ -3,6 +3,7 @@
 #include "vanttec_canlib_tx_task.h"
 #include "cmsis_os.h"
 #include <stddef.h>
+#include "main.h"
 
 void hb_task(void *args){
 	uint8_t data = 0;
@@ -10,6 +11,7 @@ void hb_task(void *args){
 		canlib_send_debug_string("Hello");
 		canlib_send_byte(VANTTEC_CAN_ID_HB, data);
 		data++;
+		HAL_GPIO_TogglePin(GPIOC, DEBUG_6_Pin);
 		osDelay(1000);
 	}
 }

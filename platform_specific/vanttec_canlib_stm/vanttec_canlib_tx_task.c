@@ -50,8 +50,8 @@ void canlib_tx_update(){
 			txHeader.DLC++;
 			//TODO do something on error
 		}
-		osDelay(10);
 		osMutexRelease(g_can_lock);
+		osDelay(10);
 	}
 }
 
