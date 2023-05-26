@@ -55,22 +55,22 @@ namespace vanttec {
                 can_frame outFrame;
                 outFrame.can_dlc = msg.len;
                 memcpy(outFrame.data, msg.data, msg.len);
-                outFrame.can_id = 0x123;
+                outFrame.can_id = 0x451;
                 frames.push_back(outFrame);
             }
         }
 
         int retry_count = 0;
-        auto start = std::chrono::system_clock::now();
+        // auto start = std::chrono::system_clock::now();
         ssize_t bytesWritten = ::write(canfd, frames.data(), frames.size() * sizeof(can_frame));
         while (bytesWritten != -1 && bytesWritten % sizeof(can_frame) == 0 && retry_count < 10) {
             std::cerr << "Retrying CAN Write!" << std::endl;
             bytesWritten = ::write(canfd, frames.data(), frames.size() * sizeof(can_frame));
             retry_count++;
         }
-        auto end = std::chrono::system_clock::now();
-        std::chrono::duration<float, std::milli> duration = end - start;
-        std::cout << duration.count() << " s\n";
+        // auto end = std::chrono::system_clock::now();
+        // std::chrono::duration<float, std::milli> duration = end - start;
+        // std::cout << duration.count() << " s\n";
     }
 
     void CANHandler::write(const vanttec::CANMessage &msg) {
