@@ -3,9 +3,13 @@ project(Vanttec_CANLib)
 
 set(CMAKE_CXX_STANDARD 14)
 
+find_package( Boost REQUIRED )
+include_directories( ${Boost_INCLUDE_DIRS} )
+
 file(GLOB_RECURSE Vanttec_CANLib_SRC src/*.cpp)
 
 add_library(Vanttec_CANLibLIB ${Vanttec_CANLib_SRC})
+target_link_libraries(Vanttec_CANLibLIB ${Boost_LIBRARIES} )
 
 include_directories(src src/Vanttec_CANLib)
 add_executable(Vanttec_CANLib main.cpp)

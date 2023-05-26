@@ -5,7 +5,6 @@
 #ifndef FLOATSERIALIZATION_CANHANDLER_H
 #define FLOATSERIALIZATION_CANHANDLER_H
 
-#include <atomic>
 #include <string>
 #include <map>
 #include <sys/epoll.h>
@@ -15,6 +14,7 @@
 #include <functional>
 #include "socketcan.h"
 #include "Vanttec_CANLib/CANMessage.h"
+#include <boost/lockfree/spsc_queue.hpp>
 
 namespace vanttec {
     class CANHandler {
@@ -37,16 +37,12 @@ namespace vanttec {
         std::vector<std::function<void(uint8_t, can_frame)>> msgParsers;
         std::map<uint8_t, std::vector<std::function<void(can_frame)>>> filterMsgParsers;
 
-        std::atomic<bool> writeDataReady{false};
-        std::queue<CANMessage> writeQueue;
+        boost::lockfree::spsc_queue<vanttec::CANMessage> writeQueue{128};
 
         static const int MAX_EVENTS = 5;
         epoll_event evlist[MAX_EVENTS];
         int epfd{-1};
         int canfd{-1};
-
-        std::condition_variable cv;
-        std::mutex cv_m;
     };
 }
 
