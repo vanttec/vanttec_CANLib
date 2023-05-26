@@ -42,8 +42,14 @@ namespace vanttec {
             return;
         }
 
-        while(!writeQueue.empty()){
-            auto elem = writeQueue.front();
+        // Copy everything in queue to send queue
+        std::queue<CANMessage> sendQueue;
+        std::swap(sendQueue, writeQueue);
+        std::queue<CANMessage>().swap(writeQueue);
+        lk.unlock();
+
+        while(!sendQueue.empty()){
+            auto elem = sendQueue.front();
 
             if (elem.len != 0)
             {
@@ -60,11 +66,10 @@ namespace vanttec {
                 }
             }
 
-            writeQueue.pop();
+            sendQueue.pop();
         }
 
         writeDataReady = false;
-        lk.unlock();
     }
 
     void CANHandler::write(const vanttec::CANMessage &msg) {
