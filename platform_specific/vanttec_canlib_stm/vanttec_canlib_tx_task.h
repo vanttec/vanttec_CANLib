@@ -17,3 +17,4 @@ typedef struct {
 	uint8_t buf[8];
 	uint8_t msg_size;
 } CAN_TX_QUEUE_OBJ;
+
