@@ -47,11 +47,16 @@ void emergencystop_task(void *args)
     register_canlib_rx(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_ESTOP, VANTTEC_CANLIB_BYTE, &emergencystop_data, 1);
     for (;;)
     {
-
         if (emergencystop_data == 1)
         {
-            // Do something with module
-
+            // Velocity to 0
+            buf[0] = 0x05;
+            buf[1] = 0x0;
+            update_table(VANTTEC_CAN_ID_THROTTLERX, 0x05, buf, 2);
+            // Switch to manual pedal
+            buf[0] = 0x07;
+            buf[1] = 0x0;
+            update_table(VANTTEC_CAN_ID_THROTTLERX, 0x07, buf, 2);
             // Return emergency signal back to 0
             buf[0] = VANTTEC_CAN_ID_ESTOP;
             buf[1] = 0x0;
@@ -81,8 +86,9 @@ void drivemode_task(void *args)
         if (drivemode_data == 1)
         {
             // Activate autonomous mode
-            // Do something with module
-
+            buf[0] = 0x07;
+            buf[1] = 0x1;
+            update_table(VANTTEC_CAN_ID_THROTTLERX, 0x07, buf, 2);
             // Return drivemode signal back to 3
             buf[0] = VANTTEC_CAN_ID_DRIVE_MODE;
             buf[1] = 0x3;
@@ -91,8 +97,9 @@ void drivemode_task(void *args)
         else if (drivemode_data == 0)
         {
             // Activate manual mode
-            // Do something with module
-
+            buf[0] = 0x07;
+            buf[1] = 0x0;
+            update_table(VANTTEC_CAN_ID_THROTTLERX, 0x07, buf, 2);
             // Return drivemode signal back to 3
             buf[0] = VANTTEC_CAN_ID_DRIVE_MODE;
             buf[1] = 0x3;
@@ -103,20 +110,8 @@ void drivemode_task(void *args)
 }
 void driverpresent_task(void *args)
 {
-    uint8_t buf[8];
-    uint8_t driverpresent_data = 0;
-    register_canlib_rx(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_DRIVER_PRESENT, VANTTEC_CANLIB_BYTE, &driverpresent_data, 1);
     for (;;)
     {
-        if (driverpresent_data == 1)
-        {
-            // Do something with module
-
-            // Return emergency signal back to 0
-            buf[0] = VANTTEC_CAN_ID_DRIVER_PRESENT;
-            buf[1] = 0x0;
-            update_table(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_DRIVER_PRESENT, buf, 2);
-        }
         osDelay(10);
     }
 }
@@ -129,13 +124,20 @@ void reverse_task(void *args)
     {
         if (reverse_data == 1)
         {
-            // Do something with module
-
-            // Return emergency signal back to 0
+            // Velocity to 0
+            buf[0] = 0x05;
+            buf[1] = 0x0;
+            update_table(VANTTEC_CAN_ID_THROTTLERX, 0x05, buf, 2);
+            // Switch to manual pedal
+            buf[0] = 0x07;
+            buf[1] = 0x0;
+            update_table(VANTTEC_CAN_ID_THROTTLERX, 0x07, buf, 2);
+            // Return reverse signal back to 0
             buf[0] = VANTTEC_CAN_ID_REVERSE;
             buf[1] = 0x0;
             update_table(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_REVERSE, buf, 2);
         }
+
         osDelay(10);
     }
 }
@@ -148,8 +150,14 @@ void frenomanual_task(void *args)
     {
         if (frenomanual_data == 1)
         {
-            // Do something with module
-
+            // Velocity to 0
+            buf[0] = 0x05;
+            buf[1] = 0x0;
+            update_table(VANTTEC_CAN_ID_THROTTLERX, 0x05, buf, 2);
+            // Switch to manual pedal
+            buf[0] = 0x07;
+            buf[1] = 0x0;
+            update_table(VANTTEC_CAN_ID_THROTTLERX, 0x07, buf, 2);
             // Return reverse signal back to 0
             buf[0] = VANTTEC_CAN_ID_FRENO_MANUAL;
             buf[1] = 0x0;
@@ -162,14 +170,21 @@ void driverfault_task(void *args)
 {
     uint8_t buf[8];
     uint8_t driverfault_data = 0;
+    uint8_t last_driverfault_data = 0;
     register_canlib_rx(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_DRIVER_FAULT, VANTTEC_CANLIB_BYTE, &driverfault_data, 1);
     for (;;)
     {
 
         if (driverfault_data == 1)
         {
-            // Do something with module
-
+            // Velocity to 0
+            buf[0] = 0x05;
+            buf[1] = 0x0;
+            update_table(VANTTEC_CAN_ID_THROTTLERX, 0x05, buf, 2);
+            // Switch to manual pedal
+            buf[0] = 0x07;
+            buf[1] = 0x0;
+            update_table(VANTTEC_CAN_ID_THROTTLERX, 0x07, buf, 2);
             // Return reverse signal back to 0
             buf[0] = VANTTEC_CAN_ID_DRIVER_FAULT;
             buf[1] = 0x0;
@@ -184,7 +199,7 @@ void init_requirements_task()
     emergencystopTaskHandle = osThreadNew(emergencystop_task, NULL, &emergencystopTaskAttributes);
     hbTaskHandle = osThreadNew(hb_task, NULL, &hbTaskAttributes);
     drivemodeTaskHandle = osThreadNew(drivemode_task, NULL, &drivemodeTaskAttributes);
-    driverpresentTaskHandle = osThreadNew(driverpresent_task, NULL, &driverpresentTaskAttributes);
+    // driverpresentTaskHandle = osThreadNew(driverpresent_task, NULL, &driverpresentTaskAttributes);
     reverseTaskHandle = osThreadNew(reverse_task, NULL, &reverseTaskAttributes);
     frenomanualTaskHandle = osThreadNew(frenomanual_task, NULL, &frenomanualTaskAttributes);
     driverfaultTaskHandle = osThreadNew(driverfault_task, NULL, &driverfaultTaskAttributes);
