@@ -50,7 +50,7 @@ void emergencystop_task(void *args)
 
         if (emergencystop_data == 1)
         {
-            // Do something with steppers
+            // Do something with module
 
             // Return emergency signal back to 0
             buf[0] = VANTTEC_CAN_ID_ESTOP;
@@ -81,7 +81,7 @@ void drivemode_task(void *args)
         if (drivemode_data == 1)
         {
             // Activate autonomous mode
-            // Do something with steppers
+            // Do something with module
 
             // Return drivemode signal back to 3
             buf[0] = VANTTEC_CAN_ID_DRIVE_MODE;
@@ -91,7 +91,7 @@ void drivemode_task(void *args)
         else if (drivemode_data == 0)
         {
             // Activate manual mode
-            // Do something with steppers
+            // Do something with module
 
             // Return drivemode signal back to 3
             buf[0] = VANTTEC_CAN_ID_DRIVE_MODE;
@@ -110,7 +110,7 @@ void driverpresent_task(void *args)
     {
         if (driverpresent_data == 1)
         {
-            // Do something with steppers
+            // Do something with module
 
             // Return emergency signal back to 0
             buf[0] = VANTTEC_CAN_ID_DRIVER_PRESENT;
@@ -129,7 +129,7 @@ void reverse_task(void *args)
     {
         if (reverse_data == 1)
         {
-            // Do something with steppers
+            // Do something with module
 
             // Return emergency signal back to 0
             buf[0] = VANTTEC_CAN_ID_REVERSE;
@@ -148,7 +148,7 @@ void frenomanual_task(void *args)
     {
         if (frenomanual_data == 1)
         {
-            // Do something with steppers
+            // Do something with module
 
             // Return reverse signal back to 0
             buf[0] = VANTTEC_CAN_ID_FRENO_MANUAL;
@@ -168,7 +168,7 @@ void driverfault_task(void *args)
 
         if (driverfault_data == 1)
         {
-            // Do something with steppers
+            // Do something with module
 
             // Return reverse signal back to 0
             buf[0] = VANTTEC_CAN_ID_DRIVER_FAULT;
