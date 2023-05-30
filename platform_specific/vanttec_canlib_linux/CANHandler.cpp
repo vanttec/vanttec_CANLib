@@ -55,7 +55,7 @@ namespace vanttec {
                 can_frame outFrame;
                 outFrame.can_dlc = msg.len;
                 memcpy(outFrame.data, msg.data, msg.len);
-                outFrame.can_id = 0x451;
+                outFrame.can_id = 0x408;
                 frames.push_back(outFrame);
             }
         }
