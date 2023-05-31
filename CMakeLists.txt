@@ -7,7 +7,7 @@ file(GLOB_RECURSE Vanttec_CANLib_SRC src/*.cpp)
 
 file(GLOB_RECURSE Vanttec_CANLib_Tests tests/*.cpp)
 add_library(Vanttec_CANLibLIB ${Vanttec_CANLib_SRC})
-target_include_directories(Vanttec_CANLibLIB PUBLIC src/Vanttec_CANLib)
+target_include_directories(Vanttec_CANLibLIB PUBLIC src src/Vanttec_CANLib)
 
 
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)

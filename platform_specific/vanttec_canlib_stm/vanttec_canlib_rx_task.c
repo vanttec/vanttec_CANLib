@@ -93,20 +93,19 @@ void parse_data(VANTTEC_CANLIB_MSGTYPE message_type, void *dst, const void *src,
         case VANTTEC_CANLIB_FLOAT:
             *((float*) dst) = can_parse_float(src, len);
             break;
-    }
+        }
 }
 
-void update_table(uint8_t device_id, uint8_t message_id, void *rxData, uint32_t dlc){
+void update_table(uint8_t device_id, uint8_t message_id, const void *rxData, uint32_t dlc){
     void *buf[8];
     for(uint32_t i = 0; i < last_entry; i++){
         if(rx_table[i].device_id == 0xff || device_id == rx_table[i].device_id){
             if(rx_table[i].message_id == message_id){
                 // Write to table
-                if(rx_table[i].len + 1 != dlc){
-                    // Data length must be the same!
-                    vanttec_canlib_error_handler();
-                }
-
+				if(rx_table[i].len + 1 != dlc){ // msg length + 1 byte of msg id
+					// Data length must be the same!
+					vanttec_canlib_error_handler();
+				}
                 // Parse data into buf
                 parse_data(rx_table[i].type, buf, rxData, dlc);
 
@@ -156,7 +155,7 @@ void register_canlib_rx_queue(uint8_t device_id, uint8_t message_id, VANTTEC_CAN
     rx_table[last_entry].message_id = message_id;
 
     // Allocates memory and writes message queue id
-    rx_table[last_entry].data = malloc(sizeof(osMessageQueueId_t));
+    rx_table[last_entry].data = malloc(sizeof(osMessageQueueId_t));		// use free somewhere?
     *((osMessageQueueId_t*) rx_table[last_entry].data) = messageQueue;
     rx_table[last_entry].len = len;
     rx_table[last_entry].is_message_queue = 1;
@@ -182,11 +181,22 @@ void can_rx_task(){
                 continue;
             }
 
-            msg.message_id = buf[0];
-            msg.device_id = header.StdId & 0x3F;
-            msg.priority = (header.StdId & 0xC0) >> 6;
-            memcpy(msg.buf, buf, header.DLC);
-            msg.len = header.DLC;
+            switch(header.StdId)
+            {
+				case 0x1A0:		// Encoder IFM RM8004
+		            msg.message_id = 0x11;
+		            msg.device_id = 0x52;
+		            msg.priority = 0;//(header.StdId & 0xC0) >> 6;
+		            memcpy(msg.buf+1, buf, header.DLC);	// To account for msg id, as the library is made in this way
+		            msg.len = header.DLC+1;	// To account for msg id, as the library is made in this way
+					break;
+				default:
+		            msg.message_id = buf[0];
+		            msg.device_id = header.StdId & 0x3F;
+		            msg.priority = (header.StdId & 0xC0) >> 6;
+		            memcpy(msg.buf, buf, header.DLC);
+		            msg.len = header.DLC;
+            }
 
             osMessageQueuePut(rxMessageQueue, &msg, msg.priority, 10);            
         }

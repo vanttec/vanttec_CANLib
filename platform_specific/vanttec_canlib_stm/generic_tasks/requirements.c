@@ -143,7 +143,7 @@ void frenomanual_task(void *args)
 {
     uint8_t buf[8];
     uint8_t frenomanual_data = 0;
-    register_canlib_rx(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_FRENO_MANUAL, VANTTEC_CANLIB_BYTE, &frenomanual_data, 1);
+    register_canlib_rx(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_PEDAL_BRAKE, VANTTEC_CANLIB_BYTE, &frenomanual_data, 1);
     for (;;)
     {
         if (frenomanual_data == 1)
@@ -151,9 +151,9 @@ void frenomanual_task(void *args)
             // Do something with steppers
 
             // Return reverse signal back to 0
-            buf[0] = VANTTEC_CAN_ID_FRENO_MANUAL;
+            buf[0] = VANTTEC_CAN_ID_PEDAL_BRAKE;
             buf[1] = 0x0;
-            update_table(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_FRENO_MANUAL, buf, 2);
+            update_table(VANTTEC_CAN_ID_JETSON, VANTTEC_CAN_ID_PEDAL_BRAKE, buf, 2);
         }
         osDelay(10);
     }
@@ -181,11 +181,11 @@ void driverfault_task(void *args)
 
 void init_requirements_task()
 {
-    emergencystopTaskHandle = osThreadNew(emergencystop_task, NULL, &emergencystopTaskAttributes);
+    //emergencystopTaskHandle = osThreadNew(emergencystop_task, NULL, &emergencystopTaskAttributes);
     hbTaskHandle = osThreadNew(hb_task, NULL, &hbTaskAttributes);
-    drivemodeTaskHandle = osThreadNew(drivemode_task, NULL, &drivemodeTaskAttributes);
-    driverpresentTaskHandle = osThreadNew(driverpresent_task, NULL, &driverpresentTaskAttributes);
-    reverseTaskHandle = osThreadNew(reverse_task, NULL, &reverseTaskAttributes);
-    frenomanualTaskHandle = osThreadNew(frenomanual_task, NULL, &frenomanualTaskAttributes);
-    driverfaultTaskHandle = osThreadNew(driverfault_task, NULL, &driverfaultTaskAttributes);
+    //drivemodeTaskHandle = osThreadNew(drivemode_task, NULL, &drivemodeTaskAttributes);
+    //driverpresentTaskHandle = osThreadNew(driverpresent_task, NULL, &driverpresentTaskAttributes);
+    //reverseTaskHandle = osThreadNew(reverse_task, NULL, &reverseTaskAttributes);
+    //frenomanualTaskHandle = osThreadNew(frenomanual_task, NULL, &frenomanualTaskAttributes);
+    //driverfaultTaskHandle = osThreadNew(driverfault_task, NULL, &driverfaultTaskAttributes);
 }
