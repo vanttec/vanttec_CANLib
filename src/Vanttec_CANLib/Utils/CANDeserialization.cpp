@@ -14,7 +14,7 @@ float deserialize_float(uint32_t in) {
     uint8_t exp = (in >> 23) & 0b011111111;
     uint32_t frac = in & 0x7FFFFF;
 
-    float out = ldexp((float) frac / 0x7FFFFF, exp - 127);
+    float out = ldexp(((float) frac / 0x7FFFFF) + 1.0f, exp - 127);
     out = sgn ? -out : out;
     return out;
 }
