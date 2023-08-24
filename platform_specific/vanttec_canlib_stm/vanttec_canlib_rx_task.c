@@ -173,6 +173,7 @@ void can_rx_task(){
     CAN_RX_QUEUE_OBJ msg;
     CAN_RxHeaderTypeDef header;
     uint8_t buf[8];
+    uint8_t buf_temp[4];
     for(;;){
         osMutexAcquire(g_can_lock, 10);
         while(HAL_CAN_GetRxFifoFillLevel(&g_vanttec_hcan, CAN_RX_FIFO0)){
@@ -190,12 +191,22 @@ void can_rx_task(){
 		            memcpy(msg.buf+1, buf, header.DLC);	// To account for msg id, as the library is made in this way
 		            msg.len = header.DLC+1;	// To account for msg id, as the library is made in this way
 					break;
-				default:
-		            msg.message_id = buf[0];
-		            msg.device_id = header.StdId & 0x3F;
-		            msg.priority = (header.StdId & 0xC0) >> 6;
-		            memcpy(msg.buf, buf, header.DLC);
-		            msg.len = header.DLC;
+                case 0x13:      // Encoder Freno
+                    if(buf[0] == 7){ //si es 04 13 entonces es peticion       
+                        msg.message_id = 0x13;
+                        msg.device_id = 0x53;
+                        msg.priority = 0;//(header.StdId & 0xC0) >> 6;
+                        memcpy(msg.buf, buf+2, 5);	// To account for msg id, as the library is made in this way
+                        msg.len = 5;	// To account for msg id, as the library is made in this way
+                    }
+                    
+					break;
+                default:
+                    msg.message_id = buf[0];
+                    msg.device_id = header.StdId & 0x3F;
+                    msg.priority = (header.StdId & 0xC0) >> 6;
+                    memcpy(msg.buf, buf, header.DLC);
+                    msg.len = header.DLC;
             }
 
             osMessageQueuePut(rxMessageQueue, &msg, msg.priority, 10);            
