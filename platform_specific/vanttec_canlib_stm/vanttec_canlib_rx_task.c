@@ -182,32 +182,11 @@ void can_rx_task(){
                 continue;
             }
 
-            switch(header.StdId)
-            {
-				case 0x1A0:		// Encoder IFM RM8004
-		            msg.message_id = 0x11;
-		            msg.device_id = 0x52;
-		            msg.priority = 0;//(header.StdId & 0xC0) >> 6;
-		            memcpy(msg.buf+1, buf, header.DLC);	// To account for msg id, as the library is made in this way
-		            msg.len = header.DLC+1;	// To account for msg id, as the library is made in this way
-					break;
-                case 0x13:      // Encoder Freno
-                    if(buf[0] == 7){ //si es 04 13 entonces es peticion       
-                        msg.message_id = 0x13;
-                        msg.device_id = 0x53;
-                        msg.priority = 0;//(header.StdId & 0xC0) >> 6;
-                        memcpy(msg.buf, buf+2, 5);	// To account for msg id, as the library is made in this way
-                        msg.len = 5;	// To account for msg id, as the library is made in this way
-                    }
-                    
-					break;
-                default:
-                    msg.message_id = buf[0];
-                    msg.device_id = header.StdId & 0x3F;
-                    msg.priority = (header.StdId & 0xC0) >> 6;
-                    memcpy(msg.buf, buf, header.DLC);
-                    msg.len = header.DLC;
-            }
+            msg.message_id = buf[0];
+            msg.device_id = header.StdId & 0x3F;
+            msg.priority = (header.StdId & 0xC0) >> 6;
+            memcpy(msg.buf, buf, header.DLC);
+            msg.len = header.DLC;
 
             osMessageQueuePut(rxMessageQueue, &msg, msg.priority, 10);            
         }

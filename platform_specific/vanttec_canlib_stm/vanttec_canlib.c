@@ -8,18 +8,19 @@ osMutexId_t g_can_lock;
 
 void init_canlib(CAN_HandleTypeDef hcan, uint8_t deviceId){
 	g_vanttec_hcan = hcan;
+	g_vanttec_deviceId = 0x400 | deviceId;
 
 	// Initialize can filters
 	CAN_FilterTypeDef filter;
-	filter.FilterBank = 3;
+	filter.FilterBank = 0;
 	filter.FilterMode = CAN_FILTERMODE_IDMASK;
 	filter.FilterScale = CAN_FILTERSCALE_32BIT;
 	filter.FilterFIFOAssignment = CAN_RX_FIFO0;
 	filter.FilterActivation = CAN_FILTER_ENABLE;
 	filter.FilterIdHigh = 0;
-	filter.FilterIdLow = 0;
+	filter.FilterIdLow = g_vanttec_deviceId;
 	filter.FilterMaskIdHigh = 0;
-	filter.FilterMaskIdLow = 0;
+	filter.FilterMaskIdLow = 0xffff;
 	filter.SlaveStartFilterBank = 14;
 
 	// TODO set vanttec can ID
@@ -31,9 +32,6 @@ void init_canlib(CAN_HandleTypeDef hcan, uint8_t deviceId){
 
 	ret = HAL_CAN_Start(&hcan);
 	if(ret != HAL_OK) vanttec_canlib_error_handler();
-
-	// TODO format device id into actual CAN id with vanttec prefix
-	g_vanttec_deviceId = 0x400 | deviceId;
 
 	g_can_lock = osMutexNew(NULL);
 
