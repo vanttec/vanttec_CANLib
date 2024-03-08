@@ -122,13 +122,13 @@ void canlib_send_short(uint8_t id, uint16_t data){
 }
 
 void canlib_send_long(uint8_t id, uint32_t data){
-	uint8_t buf[4];
+	uint8_t buf[5];
 	can_pack_long(id, data, buf, 4);
 	canlib_queue_tx(buf, 4);
 }
 
 void canlib_send_float(uint8_t id, float data){
-	uint8_t buf[4];
+	uint8_t buf[5];
 	can_pack_float(id, data, buf, 4);
 	canlib_queue_tx(buf, 4);
 }

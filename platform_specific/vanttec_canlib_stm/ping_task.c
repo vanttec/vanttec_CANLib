@@ -13,7 +13,7 @@ void ping_task(void *args){
     for(;;){
         canlib_send_byte(0xBE, rxData);
         lastRxData = rxData;
-        osDelay(10);
+        osDelay(1000);
     }
 }
 
@@ -53,7 +53,7 @@ void hb_rx_task(void *args){
 
             last_hb_data[i] = hb_data[i];
         }
-        osDelay(10);
+        osDelay(1000);
     }
 }
 
