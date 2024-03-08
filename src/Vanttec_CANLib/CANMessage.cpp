@@ -98,7 +98,7 @@ uint16_t can_parse_short(const uint8_t *data, uint8_t len) {
 }
 
 uint8_t can_pack_long(uint8_t id, uint32_t n, uint8_t *data, uint8_t len) {
-    if (data == 0 || len < 4) return 0;
+    if (data == 0 || len < 5) return 0;
 
     data[0] = id;
     serialize_long(data + 1, n);
