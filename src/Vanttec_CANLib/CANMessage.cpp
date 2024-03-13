@@ -10,39 +10,39 @@
 #ifdef __cplusplus
 namespace vanttec {
     uint8_t getId(const CANMessage &message) {
-        return can_parse_id(static_cast<const uint8_t *>(message.data), message.len);
+        return can_parse_id(static_cast<const uint8_t *>(message.data.data()), message.len);
     }
 
     float getFloat(const CANMessage &message) {
-        return can_parse_float(message.data, message.len);
+        return can_parse_float(message.data.data(), message.len);
     }
 
     void packFloat(CANMessage &message, uint8_t id, float data) {
         message.len = 5;
-        can_pack_float(id, data, message.data, message.len);
+        can_pack_float(id, data, message.data.data(), message.len);
     }
 
     uint16_t getShort(const CANMessage &message) {
-        return can_parse_short(message.data, message.len);
+        return can_parse_short(message.data.data(), message.len);
     }
 
     void packShort(CANMessage &message, uint8_t id, uint16_t data) {
         message.len = 3;
-        can_pack_short(id, data, message.data, message.len);
+        can_pack_short(id, data, message.data.data(), message.len);
     }
 
     uint32_t getLong(const CANMessage &message) {
-        return can_parse_long(message.data, message.len);
+        return can_parse_long(message.data.data(), message.len);
     }
 
     void packLong(CANMessage &message, uint8_t id, uint32_t data) {
         message.len = 5;
-        can_pack_long(id, data, message.data, message.len);
+        can_pack_long(id, data, message.data.data(), message.len);
     }
 
     void packByte(CANMessage &message, uint8_t id, uint8_t data){
         message.len = 2;
-        can_pack_byte(id, data, message.data, message.len);
+        can_pack_byte(id, data, message.data.data(), message.len);
     }
 }
 #endif

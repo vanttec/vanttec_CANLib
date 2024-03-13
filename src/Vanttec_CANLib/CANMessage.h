@@ -7,9 +7,11 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
+#include <array>
+
 namespace vanttec {
     struct CANMessage {
-        uint8_t data[5];
+        std::array<uint8_t, 8> data;
         uint8_t len{0};
 
         ~CANMessage() {
