@@ -89,6 +89,7 @@ void parse_data(VANTTEC_CANLIB_MSGTYPE message_type, void *dst, const void *src,
             break;
         case VANTTEC_CANLIB_LONG:
             *((uint32_t*) dst) = can_parse_long(src, len);
+            uint32_t tmp = can_parse_long(src, len);
             break;
         case VANTTEC_CANLIB_FLOAT:
             *((float*) dst) = can_parse_float(src, len);

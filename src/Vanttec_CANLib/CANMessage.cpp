@@ -80,7 +80,9 @@ float can_parse_float(const uint8_t *data, uint8_t len) {
         return NAN;
     }
 
-    return deserialize_float(deserialize_long(data + 1));
+    uint32_t long_val = deserialize_long(data + 1);
+
+    return deserialize_float(long_val);
 }
 
 uint8_t can_pack_short(uint8_t id, uint16_t n, uint8_t *data, uint8_t len) {

@@ -11,16 +11,17 @@ void init_canlib(CAN_HandleTypeDef hcan, uint8_t deviceId){
 	g_vanttec_deviceId = 0x400 | deviceId;
 
 	// Initialize can filters
+	// TODO We should only filter for vanttec device ID: 0x4FF
 	CAN_FilterTypeDef filter;
-	filter.FilterBank = 0;
-	filter.FilterMode = CAN_FILTERMODE_IDMASK;
-	filter.FilterScale = CAN_FILTERSCALE_32BIT;
+	filter.FilterBank = 1;
+	filter.FilterMode = CAN_FILTERMODE_IDLIST;
+	filter.FilterScale = CAN_FILTERSCALE_16BIT;
 	filter.FilterFIFOAssignment = CAN_RX_FIFO0;
 	filter.FilterActivation = CAN_FILTER_ENABLE;
 	filter.FilterIdHigh = 0;
-	filter.FilterIdLow = g_vanttec_deviceId;
+	filter.FilterIdLow = 0x410 << 5; // TODO Stepper id for now
 	filter.FilterMaskIdHigh = 0;
-	filter.FilterMaskIdLow = 0xffff;
+	filter.FilterMaskIdLow = 0;
 	filter.SlaveStartFilterBank = 14;
 
 	// TODO set vanttec can ID
