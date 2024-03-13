@@ -27,7 +27,7 @@ void serialize_short(uint8_t *data, uint16_t in) {
 }
 
 void serialize_long(uint8_t *data, uint32_t in) {
-    //in = vanttec_htonl(in);
+    in = vanttec_htonl(in);
     data[0] = in >> (8 * 3);
     data[1] = in >> (8 * 2);
     data[2] = in >> 8;
