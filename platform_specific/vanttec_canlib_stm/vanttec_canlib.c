@@ -19,9 +19,9 @@ void init_canlib(CAN_HandleTypeDef hcan, uint8_t deviceId){
 	filter.FilterFIFOAssignment = CAN_RX_FIFO0;
 	filter.FilterActivation = CAN_FILTER_ENABLE;
 	filter.FilterIdHigh = 0;
-	filter.FilterIdLow = 0x410 << 5; // TODO Stepper id for now
-	filter.FilterMaskIdHigh = 0;
-	filter.FilterMaskIdLow = 0;
+	filter.FilterIdLow = 0x0410 << 5u; // TODO Stepper id for now
+	filter.FilterMaskIdHigh = 0x0000;
+	filter.FilterMaskIdLow = 0x0000;
 	filter.SlaveStartFilterBank = 14;
 
 	// TODO set vanttec can ID

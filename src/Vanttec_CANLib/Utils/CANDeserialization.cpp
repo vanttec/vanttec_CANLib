@@ -14,7 +14,7 @@ float deserialize_float(uint32_t in) {
     uint8_t exp = (in >> 23) & 0b011111111;
     uint32_t frac = in & 0x7FFFFF;
 
-    float out = ldexp(((float) frac / 0x7FFFFF) + 1.0f, exp - 127);
+    float out = ldexp( ((float) frac / 0x7FFFFF) + 1.0f , exp - 127);
     out = sgn ? -out : out;
     return out;
 }
@@ -34,7 +34,7 @@ uint32_t deserialize_long(const uint8_t *data) {
     out |= data[2] << (8);
     out |= data[3] & 0xff;
 
-    return vanttec_ntohl(out);
+    return out; // quitamos el swap
 }
 #ifdef __cplusplus
 }
