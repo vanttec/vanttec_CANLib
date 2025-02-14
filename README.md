@@ -1,6 +1,6 @@
 # Vanttec CANLib
-<img src="https://vanttec.com/static/media/LogoAzul_Negro.532425998e530ea873e1.png" width="300">
 Multi-platform CAN communications library.
+
 
 ## Description
 
